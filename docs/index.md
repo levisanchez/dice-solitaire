@@ -1,5 +1,5 @@
 # Dice Solitaire
 
-## Design Documentation
+## Design Documentation 
 
 * [Wireframe](wireframe.md)
