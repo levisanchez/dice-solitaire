@@ -1,7 +1,6 @@
 package edu.cnm.deepdive.dicesolitaire;
 
 import android.content.res.Resources;
-import android.service.autofill.OnClickAction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,36 +15,40 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-  private static final String LABEL_ID_FORMAT = "pair_%d_label";
-  private static final String COUNT_ID_FORMAT = "pair_%d_count";
+  private static final String PAIR_LABEL_ID_FORMAT = "pair_%d_label";
+  private static final String PAIR_COUNT_ID_FORMAT = "pair_%d_count";
+  private static final String SCRATCH_LABEL_ID_FORMAT = "scratch_%d_label";
+  private static final String SCRATCH_COUNT_ID_FORMAT = "scratch_%d_count";
 
   private int minPairValue = 2;
   private int maxPairValue;
-  private TextView[] labels;
-  private ProgressBar[] counts;
+  private TextView[] pairLabels;
+  private ProgressBar[] pairCounts;
   private Button roller;
   private TextView rollDisplay;
   private Random rng;
+  private TextView[] scratchLabels;
+  private ProgressBar[] scratchCounts;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     maxPairValue = 2 * Roll.NUM_FACES;
-    labels = new TextView[maxPairValue - minPairValue + 1];
-    counts = new ProgressBar[maxPairValue - minPairValue + 1];
+    pairLabels = new TextView[maxPairValue - minPairValue + 1];
+    pairCounts = new ProgressBar[maxPairValue - minPairValue + 1];
     Resources res = getResources();
     rng = new Random();
     NumberFormat formatter = NumberFormat.getInstance();
     for (int i = minPairValue; i <= maxPairValue; i++){
-      String labelIDString = String.format(LABEL_ID_FORMAT, i);
+      String labelIDString = String.format(PAIR_LABEL_ID_FORMAT, i);
       int labelid = res.getIdentifier(labelIDString, "id", getPackageName());
-      labels[i - minPairValue] = findViewById(labelid);
-      labels[i - minPairValue].setText(formatter.format(i));
-      String countIdString = String.format(COUNT_ID_FORMAT, i);
+      pairLabels[i - minPairValue] = findViewById(labelid);
+      pairLabels[i - minPairValue].setText(formatter.format(i));
+      String countIdString = String.format(PAIR_COUNT_ID_FORMAT, i);
       int countId = res.getIdentifier(countIdString, "id", getPackageName());
-      counts[i - minPairValue] = findViewById(countId);
-      counts[i - minPairValue].setProgress(1 + rng.nextInt(10));
+      pairCounts[i - minPairValue] = findViewById(countId);
+      pairCounts[i - minPairValue].setProgress(1 + rng.nextInt(10));
     }
 
     roller = findViewById(R.id.roller);
@@ -62,5 +65,5 @@ public class MainActivity extends AppCompatActivity {
 
     }
   }
-
+//TODO add end of hw requests
 }
