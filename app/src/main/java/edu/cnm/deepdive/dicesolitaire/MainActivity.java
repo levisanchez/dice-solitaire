@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
   private void setupPlayControls(Resources res) {
     roller = findViewById(R.id.roller);
     diceImages = new ImageView[Roll.NUM_DICE];
-    for (int i = 0; i < Roll.NUM_DICE; i++){
+    for (int i = 0; i < Roll.NUM_DICE; i++) {
       String idString = String.format(DIE_IMAGE_ID_FORMAT, i + 1);
       int id = res.getIdentifier(idString, "id", getPackageName());
       diceImages[i] = findViewById(id);
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
     diceFaces = new Drawable[Roll.NUM_FACES];
     for (int i = 0; i < Roll.NUM_FACES; i++) {
-      String idString = String.format(DICE_FACE_ID_FORMAT, i +  1);
+      String idString = String.format(DICE_FACE_ID_FORMAT, i + 1);
       int id = res.getIdentifier(idString, "drawable", getPackageName());
       diceFaces[i] = getDrawable(id);
 
@@ -88,9 +88,14 @@ public class MainActivity extends AppCompatActivity {
     roller.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        Roll roll = new Roll(rng);
+        roller.setEnabled(false);
+        new DiceAnimator().start();
       }
     });
+  }
+
+  private void displayDiceFace(int die, int face){
+    diceImages[die].setImageDrawable(diceFaces[face]);
   }
 
   private void setupPairControls(Resources res, NumberFormat formatter) {
@@ -108,5 +113,43 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  private class DiceAnimator extends Thread {
+
+    @Override
+    public void run() {
+      Roll roll = new Roll(rng);
+      for (int i = 0; i < Roll.NUM_DICE; i++) {
+        final int dieIndex = i;
+        for (int j = 0; j < 12; j++) {
+          int animationFace = rng.nextInt(NUM_FACES);
+          displayFace(dieIndex, animationFace + 1);
+          try {
+            sleep(40);
+          } catch (InterruptedException e) {
+            // Ignore extension track trace e.printStackTrace();
+          }
+        }
+        final int value = roll.getDice()[i];
+        displayFace(dieIndex, value);
+      }
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          roller.setEnabled(true);
+
+        }
+      });
+
+    }
+
+    private void displayFace(final int dieIndex, final int value) {
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+        displayDiceFace(dieIndex, value - 1);
+        }
+      });
+    }
+  }
 
 }
